@@ -48,7 +48,7 @@ int main(int argc, char **argv)
         printf(ANSI_BOLD ANSI_CYAN
                "\n  ╔══════════════════════════════════════════════════╗\n"
                "  ║     Parallel Log Processing & Analytics Engine   ║\n"
-               "  ║       CS-2006 Operating Systems — Project 7      ║\n"
+               "  ║       CS-2006 Operating Systems — Project        ║\n"
                "  ╚══════════════════════════════════════════════════╝\n"
                ANSI_RESET "\n");
         printf("  File    : %s\n", cfg.logfile);
