@@ -1,5 +1,5 @@
 # Parallel Log Processing & Analytics Engine
-**CS-2006 Operating Systems — Project **
+**CS-2006 Operating Systems — Project**
 
 | Member | ID | Role |
 |---|---|---|
