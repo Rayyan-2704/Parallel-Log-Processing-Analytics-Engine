@@ -1,30 +1,10 @@
 #include "logengine.h"
 
-/*
- * Run a single-threaded parse of the entire file using the SAME bulk-read
- * + pointer-scan strategy as worker_thread(), so the benchmark measures
- * parallelism benefit rather than I/O method differences.
- *
- * Fix applied: the old implementation used fgets() (line-by-line via a
- * FILE* buffer). That incurs stdio locking and extra syscall overhead
- * compared to the workers' bulk read-then-scan approach, making the
- * single-thread baseline artificially slow and inflating the speedup figure.
- *
- * NOTE on regex patterns: the cfg->patterns array contains already-compiled
- * regex_t objects (compiled in config.c). This function uses them read-only
- * and does NOT call regcomp() or regfree() — those are the caller's
- * responsibility (main.c calls regfree() exactly once at cleanup).
- *
- * Returns wall-clock seconds elapsed, or -1.0 on error.
- */
+
 double benchmark_single(const char *path, const Config *cfg, GlobalStats *gs_out)
 {
     stats_init(gs_out, cfg->num_patterns);
 
-    /* Start timing before open() so the baseline includes disk read time,
-     * matching what the multi-thread path measures (workers time their
-     * entire run including I/O wait). Placing t_start after the bulk read
-     * excluded I/O cost from the baseline, making speedup appear higher. */
     double t_start = util_now_sec();
 
     int fd = open(path, O_RDONLY);
@@ -37,7 +17,7 @@ double benchmark_single(const char *path, const Config *cfg, GlobalStats *gs_out
     char *buf = malloc((size_t)file_size + 1);
     if (!buf) { close(fd); return -1.0; }
 
-    /* Bulk read */
+    // Bulk read
     ssize_t total_read = 0, remaining = (ssize_t)file_size;
     while (remaining > 0) {
         ssize_t r = read(fd, buf + total_read, (size_t)remaining);
@@ -48,11 +28,11 @@ double benchmark_single(const char *path, const Config *cfg, GlobalStats *gs_out
     buf[total_read] = '\0';
     close(fd);
 
-    /* Pointer-scan — identical logic to worker_thread() */
+    // Pointer-scan — identical logic to worker_thread()
     char *line_start = buf;
-    char *ptr        = buf;
-    char *end        = buf + total_read;
-    long  lineno     = 0;
+    char *ptr = buf;
+    char *end = buf + total_read;
+    long  lineno = 0;
 
     while (ptr < end) {
         if (*ptr == '\n') {
@@ -71,18 +51,23 @@ double benchmark_single(const char *path, const Config *cfg, GlobalStats *gs_out
                     int matched = 0;
                     if (pr->is_regex) {
                         matched = (regexec(&pr->regex, line_start, 0, NULL, 0) == 0);
-                    } else {
+                    }
+                    else {
                         char upper_line[MAX_LINE_LEN];
                         char upper_pat[MAX_PATTERN_LEN];
                         size_t ll = strlen(line_start);
                         if (ll >= MAX_LINE_LEN) ll = MAX_LINE_LEN - 1;
+                        
                         for (size_t i = 0; i < ll; i++)
                             upper_line[i] = (char)toupper((unsigned char)line_start[i]);
+                            
                         upper_line[ll] = '\0';
                         size_t pl = strlen(pr->pattern);
                         if (pl >= MAX_PATTERN_LEN) pl = MAX_PATTERN_LEN - 1;
+                        
                         for (size_t i = 0; i < pl; i++)
                             upper_pat[i] = (char)toupper((unsigned char)pr->pattern[i]);
+                            
                         upper_pat[pl] = '\0';
                         matched = (strstr(upper_line, upper_pat) != NULL);
                     }
@@ -95,7 +80,7 @@ double benchmark_single(const char *path, const Config *cfg, GlobalStats *gs_out
 
                 *ptr = saved;
             } else {
-                /* blank line */
+                // blank line
                 gs_out->total_lines++;
                 lineno++;
             }
@@ -104,7 +89,7 @@ double benchmark_single(const char *path, const Config *cfg, GlobalStats *gs_out
         ptr++;
     }
 
-    /* Final unterminated line */
+    // Final unterminated line
     if (line_start < end) {
         lineno++;
         Severity sev = util_parse_severity(line_start);
@@ -116,18 +101,23 @@ double benchmark_single(const char *path, const Config *cfg, GlobalStats *gs_out
             int matched = 0;
             if (pr->is_regex) {
                 matched = (regexec(&pr->regex, line_start, 0, NULL, 0) == 0);
-            } else {
+            }
+            else {
                 char upper_line[MAX_LINE_LEN];
                 char upper_pat[MAX_PATTERN_LEN];
                 size_t ll = strlen(line_start);
                 if (ll >= MAX_LINE_LEN) ll = MAX_LINE_LEN - 1;
+                
                 for (size_t i = 0; i < ll; i++)
                     upper_line[i] = (char)toupper((unsigned char)line_start[i]);
+                    
                 upper_line[ll] = '\0';
                 size_t pl = strlen(pr->pattern);
                 if (pl >= MAX_PATTERN_LEN) pl = MAX_PATTERN_LEN - 1;
+                
                 for (size_t i = 0; i < pl; i++)
                     upper_pat[i] = (char)toupper((unsigned char)pr->pattern[i]);
+                    
                 upper_pat[pl] = '\0';
                 matched = (strstr(upper_line, upper_pat) != NULL);
             }
