@@ -1,6 +1,6 @@
 #include "logengine.h"
 
-/* ─── helpers ────────────────────────────────────────────── */
+/* ─── helpers ───────────────────────────────────────────── */
 
 static void print_divider(int width, const char *color)
 {
