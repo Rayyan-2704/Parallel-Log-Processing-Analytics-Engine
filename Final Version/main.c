@@ -63,7 +63,7 @@ int main(int argc, char **argv)
                "\n  \xe2\x95\x94\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x97\n"
                "  \xe2\x95\x91     Parallel Log Processing & Analytics Engine   \xe2\x95\x91\n"
                "  \xe2\x95\x91       CS-2006 Operating Systems \xe2\x80\x94 Project        \xe2\x95\x91\n"
-               "  \xe2\x95\x9a\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x9d\n"
+               "  \xe2\x95\x9a\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x90\xe2\x95\x9d\n"
                ANSI_RESET "\n");
         printf("  File    : %s\n", cfg.logfile);
         printf("  Threads : %d\n", cfg.num_threads);
@@ -74,15 +74,12 @@ int main(int argc, char **argv)
     memset(&bench, 0, sizeof(bench));
 
     if (cfg.benchmark) {
-        printf(ANSI_DIM "  Running single-thread baseline (bulk-read method)..."
-               ANSI_RESET "\n");
+        printf(ANSI_DIM "  Running single-thread baseline (bulk-read method)..." ANSI_RESET "\n");
         GlobalStats st_stats;
         bench.single_thread_sec = benchmark_single(cfg.logfile, &cfg, &st_stats);
-        bench.st_throughput = bench.single_thread_sec > 0
-            ? (double)st_stats.total_lines / bench.single_thread_sec : 0;
+        bench.st_throughput = bench.single_thread_sec > 0 ? (double)st_stats.total_lines / bench.single_thread_sec : 0;
         stats_destroy(&st_stats);
-        printf(ANSI_DIM "  Baseline done: %.3f s\n" ANSI_RESET,
-               bench.single_thread_sec);
+        printf(ANSI_DIM "  Baseline done: %.3f s\n" ANSI_RESET, bench.single_thread_sec);
     }
 
     pthread_t  threads[MAX_THREADS];
@@ -93,10 +90,10 @@ int main(int argc, char **argv)
     double t_start = util_now_sec();
 
     for (int i = 0; i < cfg.num_threads; i++) {
-        wargs[i].seg            = &segs[i];
-        wargs[i].cfg            = &cfg;
-        wargs[i].gstats         = &gstats;
-        wargs[i].io_sem         = &io_sem;
+        wargs[i].seg = &segs[i];
+        wargs[i].cfg = &cfg;
+        wargs[i].gstats = &gstats;
+        wargs[i].io_sem = &io_sem;
         wargs[i].progress_lines = &progress_counter;
 
         if (pthread_create(&threads[i], NULL, worker_thread, &wargs[i]) != 0) {
@@ -125,23 +122,18 @@ int main(int argc, char **argv)
 
     if (cfg.benchmark) {
         bench.multi_thread_sec = elapsed;
-        bench.mt_throughput = elapsed > 0
-            ? (double)gstats.total_lines / elapsed : 0;
+        bench.mt_throughput = elapsed > 0 ? (double)gstats.total_lines / elapsed : 0;
         bench.total_lines = gstats.total_lines;
-        bench.speedup = bench.multi_thread_sec > 0
-            ? bench.single_thread_sec / bench.multi_thread_sec : 0;
+        bench.speedup = bench.multi_thread_sec > 0 ? bench.single_thread_sec / bench.multi_thread_sec : 0;
     }
 
-    analytics_render(&gstats, &cfg,
-                     cfg.benchmark ? &bench : NULL,
-                     elapsed, file_bytes);
+    analytics_render(&gstats, &cfg, cfg.benchmark ? &bench : NULL, elapsed, file_bytes);
 
     if (cfg.export_txt)
-        analytics_export_txt(&gstats, &cfg,
-                             cfg.benchmark ? &bench : NULL, elapsed);
+        analytics_export_txt(&gstats, &cfg, cfg.benchmark ? &bench : NULL, elapsed);
+        
     if (cfg.export_csv)
-        analytics_export_csv(&gstats, &cfg,
-                             cfg.benchmark ? &bench : NULL);
+        analytics_export_csv(&gstats, &cfg, cfg.benchmark ? &bench : NULL);
 
     if (cfg.plot) {
         if (!cfg.export_csv) {
@@ -152,8 +144,7 @@ int main(int argc, char **argv)
                     " (and '%s_speedup.png' if -b).\n" ANSI_RESET,
                     cfg.export_path, cfg.export_path);
         }
-        analytics_plot(&gstats, &cfg,
-                       cfg.benchmark ? &bench : NULL);
+        analytics_plot(&gstats, &cfg, cfg.benchmark ? &bench : NULL);
     }
 
     
