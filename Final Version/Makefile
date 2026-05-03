@@ -31,7 +31,6 @@ demo: all
 	    --export demo_report --plot \
 	    demo.log
 
-# Run with default thread count, no benchmark
 run: all
 	./$(TARGET) $(ARGS)
 
