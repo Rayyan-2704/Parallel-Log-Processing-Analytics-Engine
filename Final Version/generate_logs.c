@@ -1,26 +1,18 @@
-/*
- * generate_logs.c  —  generates a realistic synthetic log file for testing
- * Usage: ./generate_logs <num_lines> <output_file>
- * Example: ./generate_logs 500000 test.log
- */
+/* generate_logs.c  —  generates a realistic synthetic log file for testing
+   Usage: ./generate_logs <num_lines> <output_file>
+   Example: ./generate_logs 500000 test.log */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-static const char *LEVELS[] = {
-    "DEBUG", "DEBUG", "DEBUG",
-    "INFO",  "INFO",  "INFO",  "INFO",
-    "WARNING", "WARNING",
-    "ERROR",
-    "CRITICAL"
-};
+static const char *LEVELS[] = {"DEBUG", "DEBUG", "DEBUG", "INFO",  "INFO",  "INFO",  "INFO", "WARNING", "WARNING", "ERROR", "CRITICAL"};
+
 #define N_LEVELS 11
 
-static const char *SOURCES[] = {
-    "kernel", "auth", "sshd", "nginx", "mysql",
-    "cron", "systemd", "NetworkManager", "app.main", "app.worker"
-};
+static const char *SOURCES[] = {"kernel", "auth", "sshd", "nginx", "mysql", "cron", "systemd", "NetworkManager", "app.main", "app.worker"};
+
 #define N_SOURCES 10
 
 static const char *MESSAGES[] = {
@@ -45,6 +37,7 @@ static const char *MESSAGES[] = {
     "Critical: watchdog timer expired, restarting subsystem %d",
     "WARNING: swap usage at %d%%"
 };
+
 #define N_MSGS 20
 
 int main(int argc, char **argv)
@@ -62,7 +55,7 @@ int main(int argc, char **argv)
 
     srand((unsigned)time(NULL));
 
-    time_t base_time = time(NULL) - n;  /* start n seconds ago */
+    time_t base_time = time(NULL) - n;  // start n seconds ago
 
     for (long i = 0; i < n; i++) {
         time_t t = base_time + i;
