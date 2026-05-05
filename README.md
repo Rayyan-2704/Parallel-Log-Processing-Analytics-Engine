@@ -3,9 +3,9 @@
 
 | Member | ID | Role |
 |---|---|---|
-| Rayyan Aamir | 24K-0687 | Lead Developer |
-| Muhammad Usaid Khan | 24K-0832 | Sync & Stats |
-| Muhammad Ahmed Shah Rashdi | 24K-0709 | Analytics & Output |
+| [Rayyan Aamir](https://github.com/Rayyan-2704) | 24K-0687 | Lead Developer |
+| [Muhammad Usaid Khan](https://github.com/MuhammadUsaidKhan) | 24K-0832 | Sync & Stats |
+| [Muhammad Ahmed Shah Rashdi](https://github.com/AhmedCodes03) | 24K-0709 | Analytics & Output |
 
 Platform: **Linux Ubuntu 24.04.3 LTS** | Language: **C (POSIX Threads, Semaphores, Mutexes)**
 
@@ -103,7 +103,7 @@ Options:
 | `pthread_mutex_t` | `stats.c` | Protect global statistics during merge |
 | `sem_t` (unnamed) | `worker.c` | Cap simultaneous disk readers to `IO_CONCURRENCY` (4) |
 | `pthread_create` / `pthread_join` | `main.c` | Worker thread lifecycle |
-| `__sync_fetch_and_add` | `worker.c` | Lock-free progress counter increment |
+| `atomic_fetch_add` | `worker.c` | Lock-free progress counter increment |
 | `clock_gettime(CLOCK_MONOTONIC)` | `util.c` | High-resolution wall-clock timing |
 
 ### Two-Phase Merge Strategy
